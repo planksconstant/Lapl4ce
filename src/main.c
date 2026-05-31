@@ -1,24 +1,33 @@
+#include "Lexer.h"
 #include "ast.h"
 #include <stdio.h>
 
 int main() {
-  // 1. Build the left branch: t^2
-  ASTNode *t = create_var_node();
-  ASTNode *two = create_num_node(2);
-  ASTNode *left_subtree = create_op_node('^', t, two);
+  char equation[1024] = "";
+  printf("f(t) = ");
+  if (fscanf(stdin, "%1023[^\n]", equation) != 1) {
+    printf("Error in input ");
+    return 1;
+  }
+  Token token_buffer[128];
 
-  // 2. Build the right branch: e^3
-  ASTNode *e = create_exp_node();
-  ASTNode *three = create_num_node(3);
-  ASTNode *right_subtree = create_op_node('^', e, three);
+  // Stage 1: Chop string into tokens
+  int token_count = tokenize(equation, token_buffer, 128);
+  if (token_count == -1) {
+    printf("Lexer error detected.\n");
+    return 1;
+  }
 
-  // 3. Join them at the root with '+'
-  ASTNode *root = create_op_node('+', left_subtree, right_subtree);
+  // Stage 2: Turn flat tokens into a tree map
+  ASTNode *root = parse(token_buffer);
 
-  // 4. Print your creation!
-  printf("Generated AST Structural Representation:\n");
+  // Stage 3: Print and verify the architecture
+  printf("Input: %s\n", equation);
+  printf("AST Structure:     ");
   print_ast(root);
   printf("\n");
-
+  printf("Laplace Transform L[f(t)] :   ");
+  generate_laplace(root);
+  printf("\n");
   return 0;
 }

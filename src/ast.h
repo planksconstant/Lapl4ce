@@ -1,6 +1,7 @@
 #ifndef AST_H
 #define AST_H
 
+#include "Lexer.h"
 typedef enum {
   NODE_OP,
   NODE_VAR,
@@ -23,5 +24,7 @@ ASTNode *create_var_node(void);
 ASTNode *create_exp_node(void);
 // recursive
 void print_ast(ASTNode *node);
+ASTNode *parse(Token *tokens);
+void generate_laplace(ASTNode *node);
 
 #endif
